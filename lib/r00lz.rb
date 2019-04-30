@@ -1,6 +1,8 @@
 require "r00lz/version"
 
 module R00lz
+  require "erb"
+
   class Error < StandardError; end
 
   class App
@@ -22,6 +24,20 @@ module R00lz
 
     def initialize(env)
       @env = env
+    end
+
+    def render(name, b = binding())
+      template = "app/views/#{name}.html.erb"
+      e = ERB.new(File.read template)
+      e.result(b)
+    end
+
+    def request
+      @request ||= Rack::Request.new @env
+    end
+
+    def params
+      request.params
     end
   end
 
